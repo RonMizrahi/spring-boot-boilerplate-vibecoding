@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -32,13 +31,17 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     
-    @InjectMocks
+    @Mock
+    private KafkaEventPublisher kafkaEventPublisher;
+    
     private UserService userService;
     
     private User testUser;
     
     @BeforeEach
     void setUp() {
+        userService = new UserService(userRepository, Optional.of(kafkaEventPublisher));
+        
         testUser = new User("testuser", "test@example.com", "password123");
         testUser.setId(1L);
         testUser.setFirstName("John");

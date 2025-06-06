@@ -104,3 +104,98 @@ src/test/java/com/template/service/RedisServiceTest.java
 **Commit:** `c73e2a7` - Redis integration and caching implementation complete
 
 ---
+
+## Unit 7 - Kafka Integration and Event-Driven Architecture ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **Event Classes Creation**
+   - Created `BaseEvent.java` as abstract base class for all events
+   - Created `UserCreatedEvent.java` for user creation notifications
+   - Created `UserUpdatedEvent.java` for user update notifications  
+   - Created `UserDeletedEvent.java` for user deletion notifications
+   - All events use Jackson annotations for JSON serialization
+   - Support for LocalDateTime with proper JSON handling
+
+2. **Kafka Configuration Setup**
+   - Created `KafkaConfig.java` with comprehensive producer/consumer configuration
+   - Configured separate factories for String and JSON message types
+   - Implemented error handling with `ErrorHandlingDeserializer`
+   - Set up manual acknowledgment for reliable message processing
+   - Configured trusted packages for JSON deserialization security
+   - Added idempotent producers with retries and "all" acknowledgment
+
+3. **Event Publishing Service**
+   - Created `KafkaEventPublisher.java` for publishing events to Kafka topics
+   - Implemented methods for both JSON events and string messages
+   - Added topic constants: `user-events`, `notifications`, `audit-events`
+   - Comprehensive error handling with logging and CompletableFuture returns
+   - Conditional loading based on Kafka configuration presence
+
+4. **Event Consumption Service**
+   - Created `KafkaEventConsumer.java` with `@KafkaListener` annotations
+   - Separate handlers for user events and notifications
+   - Manual acknowledgment to prevent message loss
+   - Comprehensive error handling with logging
+   - Processing methods for different event types (placeholder implementations)
+
+5. **UserService Integration**
+   - Integrated Kafka event publishing into `UserService`
+   - Added optional `KafkaEventPublisher` dependency with graceful degradation
+   - Events published on: user creation, update, and deletion
+   - Updated constructor to accept optional KafkaEventPublisher
+   - All events include proper metadata (eventId, timestamp, source)
+
+6. **Testing Infrastructure**
+   - Created `KafkaEventPublisherTest.java` with comprehensive unit tests
+   - Created `KafkaEventConsumerTest.java` for consumer testing
+   - Created `KafkaConfigTest.java` for configuration validation
+   - Updated `UserServiceTest.java` to handle new constructor signature
+   - All tests use mocked Kafka templates to avoid requiring actual Kafka instance
+
+### 🔧 Technical Details:
+- **Event-Driven Architecture**: Implements publish-subscribe pattern for user operations
+- **JSON Serialization**: Uses Jackson with JavaTimeModule for LocalDateTime support
+- **Error Handling**: Graceful fallback when Kafka is unavailable
+- **Reliable Processing**: Manual acknowledgment prevents message loss
+- **Security**: Trusted packages configuration for JSON deserialization
+- **Performance**: Idempotent producers with optimized retry logic
+
+### 📁 New Files Created:
+```
+src/main/java/com/template/event/
+├── BaseEvent.java
+├── UserCreatedEvent.java
+├── UserUpdatedEvent.java
+└── UserDeletedEvent.java
+
+src/main/java/com/template/config/KafkaConfig.java
+src/main/java/com/template/service/KafkaEventPublisher.java
+src/main/java/com/template/service/KafkaEventConsumer.java
+
+src/test/java/com/template/config/KafkaConfigTest.java
+src/test/java/com/template/service/KafkaEventPublisherTest.java
+src/test/java/com/template/service/KafkaEventConsumerTest.java
+```
+
+### 🚀 Event Integration Points:
+- `UserService.createUser()` - Publishes UserCreatedEvent to user-events topic
+- `UserService.updateUser()` - Publishes UserUpdatedEvent to user-events topic
+- `UserService.deleteUser()` - Publishes UserDeletedEvent to user-events topic
+- Event consumers ready for processing notifications, analytics, and audit trails
+- Supports both direct Kafka operations and convenience methods
+
+### 📋 Kafka Topics Configuration:
+- **user-events**: JSON events for user lifecycle operations
+- **notifications**: String messages for user notifications
+- **audit-events**: JSON events for audit and compliance tracking
+
+### ⚙️ Configuration:
+- **Conditional Loading**: Only activates when `spring.kafka.bootstrap-servers` is configured
+- **Development Config**: Pre-configured in `application-dev.yml` for local development
+- **Producer Settings**: Idempotent with retries and full acknowledgment
+- **Consumer Settings**: Manual acknowledgment with earliest offset reset
+
+**Commit:** `[to be generated]` - Kafka integration and event-driven architecture complete
+
+---

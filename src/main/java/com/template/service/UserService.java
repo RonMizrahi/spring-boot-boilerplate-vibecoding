@@ -1,10 +1,12 @@
 package com.template.service;
 
 import com.template.entity.User;
+import com.template.event.UserCreatedEvent;
+import com.template.event.UserDeletedEvent;
+import com.template.event.UserUpdatedEvent;
 import com.template.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for User entity operations.
@@ -25,17 +28,18 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 public class UserService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+      private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     
     private final UserRepository userRepository;
-      /**
-     * Constructor injection for UserRepository.
+    private final KafkaEventPublisher kafkaEventPublisher;      /**
+     * Constructor injection for UserRepository and KafkaEventPublisher.
      * 
      * @param userRepository the user repository
+     * @param kafkaEventPublisher the Kafka event publisher (optional)
      */
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, Optional<KafkaEventPublisher> kafkaEventPublisher) {
         this.userRepository = userRepository;
+        this.kafkaEventPublisher = kafkaEventPublisher.orElse(null);
     }
     
     /**
@@ -56,9 +60,11 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email '" + user.getEmail() + "' already exists");
         }
-        
-        var savedUser = userRepository.save(user);
+          var savedUser = userRepository.save(user);
         logger.info("Created user with ID: {} and username: {}", savedUser.getId(), savedUser.getUsername());
+        
+        // Publish user created event
+        publishUserCreatedEvent(savedUser);
         
         return savedUser;
     }
@@ -91,9 +97,11 @@ public class UserService {
         if (existingByEmail.isPresent() && !existingByEmail.get().getId().equals(user.getId())) {
             throw new IllegalArgumentException("Email '" + user.getEmail() + "' already exists");
         }
-        
-        var updatedUser = userRepository.save(user);
+          var updatedUser = userRepository.save(user);
         logger.info("Updated user with ID: {}", updatedUser.getId());
+        
+        // Publish user updated event
+        publishUserUpdatedEvent(updatedUser);
         
         return updatedUser;
     }
@@ -249,17 +257,19 @@ public class UserService {
      * Deletes a user by ID.     * 
      * @param userId the user ID
      * @throws IllegalArgumentException if user not found
-     */
-    @Transactional
+     */    @Transactional
     @CacheEvict(value = "users", key = "#userId")
     public void deleteUser(Long userId) {        logger.debug("Deleting user with ID: {}", userId);
         
-        if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("User with ID " + userId + " not found");
-        }
+        // Get user details before deletion for event publishing
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found"));
         
         userRepository.deleteById(userId);
         logger.info("Deleted user with ID: {}", userId);
+        
+        // Publish user deleted event
+        publishUserDeletedEvent(user);
     }
     
     /**
@@ -290,9 +300,79 @@ public class UserService {
      * 
      * @param email the email to check
      * @return true if email exists
-     */
-    public boolean existsByEmail(String email) {
+     */    public boolean existsByEmail(String email) {
         logger.debug("Checking if email exists: {}", email);
         return userRepository.existsByEmail(email);
+    }
+    
+    /**
+     * Publishes a user created event to Kafka.
+     * 
+     * @param user the created user
+     */
+    private void publishUserCreatedEvent(User user) {
+        if (kafkaEventPublisher != null) {
+            try {
+                UserCreatedEvent event = new UserCreatedEvent(
+                    UUID.randomUUID().toString(),
+                    LocalDateTime.now(),
+                    "user-service",
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail()
+                );
+                kafkaEventPublisher.publishUserEvent(event);
+                logger.debug("Published UserCreatedEvent for user ID: {}", user.getId());
+            } catch (Exception e) {
+                logger.error("Failed to publish UserCreatedEvent for user ID: {}: {}", user.getId(), e.getMessage(), e);
+            }
+        }
+    }
+    
+    /**
+     * Publishes a user updated event to Kafka.
+     * 
+     * @param user the updated user
+     */
+    private void publishUserUpdatedEvent(User user) {
+        if (kafkaEventPublisher != null) {
+            try {
+                UserUpdatedEvent event = new UserUpdatedEvent(
+                    UUID.randomUUID().toString(),
+                    LocalDateTime.now(),
+                    "user-service",
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail()
+                );
+                kafkaEventPublisher.publishUserEvent(event);
+                logger.debug("Published UserUpdatedEvent for user ID: {}", user.getId());
+            } catch (Exception e) {
+                logger.error("Failed to publish UserUpdatedEvent for user ID: {}: {}", user.getId(), e.getMessage(), e);
+            }
+        }
+    }
+    
+    /**
+     * Publishes a user deleted event to Kafka.
+     * 
+     * @param user the deleted user
+     */
+    private void publishUserDeletedEvent(User user) {
+        if (kafkaEventPublisher != null) {
+            try {
+                UserDeletedEvent event = new UserDeletedEvent(
+                    UUID.randomUUID().toString(),
+                    LocalDateTime.now(),
+                    "user-service",
+                    user.getId(),
+                    user.getUsername()
+                );
+                kafkaEventPublisher.publishUserEvent(event);
+                logger.debug("Published UserDeletedEvent for user ID: {}", user.getId());
+            } catch (Exception e) {
+                logger.error("Failed to publish UserDeletedEvent for user ID: {}: {}", user.getId(), e.getMessage(), e);
+            }
+        }
     }
 }
