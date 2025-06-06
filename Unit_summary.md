@@ -196,6 +196,6 @@ src/test/java/com/template/service/KafkaEventConsumerTest.java
 - **Producer Settings**: Idempotent with retries and full acknowledgment
 - **Consumer Settings**: Manual acknowledgment with earliest offset reset
 
-**Commit:** `[to be generated]` - Kafka integration and event-driven architecture complete
+**Commit:** `6a4e83e` - Kafka integration and event-driven architecture complete
 
 ---
