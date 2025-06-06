@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Custom UserDetailsService implementation for Spring Security.
@@ -81,19 +83,36 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .credentialsExpired(!user.getCredentialsNonExpired())
             .disabled(!user.getEnabled())
             .build();
-    }
-
-    /**
+    }    /**
      * Gets authorities (roles/permissions) for the user.
-     * Currently assigns a default role - will be enhanced in Unit 10 with proper RBAC.
+     * Includes both roles and permissions as Spring Security authorities.
      * 
      * @param user the user entity
      * @return list of granted authorities
      */
     private List<GrantedAuthority> getAuthorities(User user) {
-        // For now, assign a default role to all users
-        // In Unit 10, we'll implement proper role-based authorization
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        
+        // Add roles as authorities (prefixed with ROLE_)
+        user.getRoles().stream()
+            .filter(role -> role.getEnabled())
+            .forEach(role -> {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                
+                // Add permissions from roles as authorities
+                role.getPermissions().stream()
+                    .filter(permission -> permission.getEnabled())
+                    .forEach(permission -> 
+                        authorities.add(new SimpleGrantedAuthority(permission.getName()))
+                    );
+            });
+        
+        // If user has no roles, assign default USER role
+        if (authorities.isEmpty()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        
+        return authorities;
     }
 
     /**

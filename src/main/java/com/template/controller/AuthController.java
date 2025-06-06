@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,11 +80,11 @@ public class AuthController {
                 .body(Map.of("error", "Internal server error"));
         }
     }
-    
-    /**
-     * Token validation endpoint
+      /**
+     * Token validation endpoint (admin only)
      */
     @PostMapping("/validate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> validateToken(@RequestBody TokenValidationRequest tokenRequest) {
         try {
             boolean isValid = jwtUtils.validateJwtToken(tokenRequest.getToken());
@@ -106,11 +107,11 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("valid", false));
         }
     }
-    
-    /**
+      /**
      * Get current user info from JWT token
      */
     @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
         try {
             String token = extractTokenFromRequest(request);

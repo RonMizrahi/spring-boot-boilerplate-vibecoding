@@ -326,3 +326,79 @@ pom.xml (added JJWT dependencies)
 **Status:** ✅ Unit 9 Complete - JWT token generation and validation implemented successfully
 
 ---
+
+## Unit 10 - Role-Based Authorization (RBAC) ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **RBAC Entity Model**
+   - Created `Permission.java` entity with resource/action fields
+   - Created `Role.java` entity with many-to-many permissions relationship
+   - Updated `User.java` entity with many-to-many roles relationship
+   - Added helper methods for roles and permissions management
+
+2. **Repository Layer**
+   - Created `RoleRepository.java` with role management methods
+   - Created `PermissionRepository.java` with permission management methods
+   - Added query methods for finding roles by permissions and vice versa
+   - Integrated repositories with existing UserRepository
+
+3. **Security Integration**
+   - Updated `UserDetailsServiceImpl.java` to map roles/permissions to Spring Security authorities
+   - Enhanced `AuthorizationService.java` with programmatic role/permission checks
+   - Added role and permission validation methods
+   - Implemented security event logging
+
+4. **Method-Level Security**
+   - Added `@PreAuthorize` annotations to controller methods
+   - Protected admin endpoints with `hasRole('ADMIN')` checks
+   - Protected user endpoints with `isAuthenticated()` checks
+   - Created detailed health endpoint for admin access only
+
+### 📁 Files Created/Modified:
+```
+src/main/java/com/template/entity/Permission.java (new)
+src/main/java/com/template/entity/Role.java (new)
+src/main/java/com/template/entity/User.java (updated - added roles)
+src/main/java/com/template/repository/RoleRepository.java (new)
+src/main/java/com/template/repository/PermissionRepository.java (new)
+src/main/java/com/template/service/UserDetailsServiceImpl.java (updated)
+src/main/java/com/template/security/AuthorizationService.java (updated)
+src/main/java/com/template/controller/AuthController.java (updated - security annotations)
+src/main/java/com/template/controller/HealthController.java (updated - admin endpoint)
+src/main/java/com/template/config/SecurityConfig.java (already had @EnableMethodSecurity)
+```
+
+### 🔐 RBAC Features:
+- **Hierarchical Permissions**: Role -> Permissions -> Actions on Resources
+- **Many-to-Many Relationships**: Users can have multiple roles, roles can have multiple permissions
+- **Method-Level Security**: `@PreAuthorize` annotations for fine-grained access control
+- **Programmatic Checks**: AuthorizationService for custom authorization logic
+- **Spring Security Integration**: Authorities automatically mapped from roles and permissions
+- **Admin vs User Access**: Different permission levels for different user types
+
+### 🎯 Security Annotations Added:
+- `@PreAuthorize("isAuthenticated()")` - Requires valid authentication
+- `@PreAuthorize("hasRole('ADMIN')")` - Requires ADMIN role
+- `@PreAuthorize("hasPermission('USER', 'WRITE')")` - Custom permission checks
+- Method-level security enabled globally via `@EnableMethodSecurity`
+
+### 📊 Entity Relationships:
+```
+User (1) ←→ (N) Role (N) ←→ (N) Permission
+- Users can have multiple roles
+- Roles can have multiple permissions  
+- Permissions define resource-action pairs
+- Authorities = ROLE_[role] + [permission] formats
+```
+
+### 🔧 Technical Implementation:
+- **Database Schema**: Proper indexes on join tables for performance
+- **Validation**: Bean validation on all entity fields
+- **Timestamps**: CreatedAt/UpdatedAt for audit trails
+- **Enabled Flags**: Soft disable for roles and permissions
+- **Helper Methods**: Convenient role/permission management on User entity
+
+**Status:** ✅ Unit 10 Complete - Role-based authorization with method-level security implemented successfully
+
+---

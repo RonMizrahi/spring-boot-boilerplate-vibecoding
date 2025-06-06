@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * User entity representing application users.
@@ -56,9 +58,20 @@ public class User {
     
     @Column(name = "account_non_locked", nullable = false)
     private Boolean accountNonLocked = true;
-    
-    @Column(name = "credentials_non_expired", nullable = false)
+      @Column(name = "credentials_non_expired", nullable = false)
     private Boolean credentialsNonExpired = true;
+    
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"),
+        indexes = {
+            @Index(name = "idx_user_roles_user", columnList = "user_id"),
+            @Index(name = "idx_user_roles_role", columnList = "role_id")
+        }
+    )
+    private Set<Role> roles = new HashSet<>();
     
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -180,10 +193,71 @@ public class User {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-    
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+      public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
+    public Set<Role> getRoles() {
+        return roles;
+    }
+    
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+    
+    // Helper methods for managing roles
+    
+    /**
+     * Add a role to this user.
+     * 
+     * @param role the role to add
+     */
+    public void addRole(Role role) {
+        this.roles.add(role);
+        role.getUsers().add(this);
+    }
+    
+    /**
+     * Remove a role from this user.
+     * 
+     * @param role the role to remove
+     */
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+        role.getUsers().remove(this);
+    }
+    
+    /**
+     * Check if this user has a specific role.
+     * 
+     * @param roleName the role name to check
+     * @return true if the user has the role
+     */
+    public boolean hasRole(String roleName) {
+        return roles.stream()
+                .anyMatch(role -> role.getName().equals(roleName));
+    }
+    
+    /**
+     * Check if this user has a specific permission.
+     * 
+     * @param permissionName the permission name to check
+     * @return true if the user has the permission through any role
+     */
+    public boolean hasPermission(String permissionName) {
+        return roles.stream()
+                .anyMatch(role -> role.hasPermission(permissionName));
+    }
+    
+    /**
+     * Check if this user has admin role.
+     * 
+     * @return true if user has ADMIN role
+     */
+    public boolean isAdmin() {
+        return hasRole("ADMIN");
+    }
+    
       /**
      * Gets the full name by combining first and last name.
      * Uses Java 21 string handling best practices.
