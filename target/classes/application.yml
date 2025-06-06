@@ -26,3 +26,9 @@ logging:
     '[org.springframework]': INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# JWT Configuration
+app:
+  jwt:
+    secret: mySecretKeyForJWTTokenGenerationAndValidationThatShouldBeVeryLongAndSecure
+    expiration: 86400  # 24 hours in seconds

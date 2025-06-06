@@ -1,6 +1,9 @@
 com\template\repository\UserRepository.class
+com\template\controller\AuthController$LoginRequest.class
 com\template\service\UserDetailsServiceImpl.class
+com\template\security\JwtAuthenticationFilter.class
 com\template\service\UserProfileService.class
+com\template\controller\AuthController.class
 com\template\event\UserUpdatedEvent.class
 com\template\document\UserProfile.class
 com\template\config\JpaConfig.class
@@ -15,7 +18,9 @@ com\template\service\RedisService.class
 com\template\service\KafkaEventConsumer.class
 com\template\service\KafkaEventPublisher.class
 com\template\entity\User.class
+com\template\security\JwtUtils.class
 com\template\config\SecurityConfig.class
 com\template\event\UserDeletedEvent.class
 com\template\config\MongoConfig.class
 com\template\service\UserService.class
+com\template\controller\AuthController$TokenValidationRequest.class

@@ -249,3 +249,80 @@ src/main/java/com/template/service/UserDetailsServiceImpl.java
 **Status:** ✅ Unit 8 Complete - Basic Spring Security configuration implemented and verified
 
 ---
+
+## Unit 9 - JWT Token Generation and Validation ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **JWT Utility Implementation**
+   - Created `src/main/java/com/template/security/JwtUtils.java`
+   - JWT token generation from authentication and username
+   - Token validation with comprehensive error handling
+   - Username extraction from valid tokens
+   - Token expiration checking functionality
+   - Configurable secret key and expiration time
+
+2. **JWT Authentication Filter**
+   - Created `src/main/java/com/template/security/JwtAuthenticationFilter.java`
+   - Custom filter extending OncePerRequestFilter
+   - Authorization header parsing (Bearer token format)
+   - Automatic user authentication from valid JWT tokens
+   - Integration with Spring Security context
+   - Proper error handling and logging
+
+3. **Authentication Controller**
+   - Created `src/main/java/com/template/controller/AuthController.java`
+   - POST `/api/auth/login` endpoint for user authentication
+   - POST `/api/auth/validate` endpoint for token validation
+   - GET `/api/auth/me` endpoint for current user info
+   - Comprehensive error handling with proper HTTP status codes
+   - JWT token response with user details
+
+4. **Security Configuration Updates**
+   - Updated SecurityConfig to integrate JWT authentication filter
+   - Changed session management to STATELESS for JWT compatibility
+   - Removed HTTP Basic and form login (replaced with JWT)
+   - Added JWT filter before UsernamePasswordAuthenticationFilter
+   - Maintained public endpoints for authentication and health checks
+
+5. **JWT Configuration**
+   - Added JWT configuration properties to application.yml
+   - Configurable secret key and token expiration
+   - Default 24-hour token expiration
+   - Secure JWT secret key for signing
+
+### 🔧 Technical Implementation:
+- **JJWT Library**: Modern JWT implementation with version 0.12.5
+- **Security Integration**: Full Spring Security integration with custom filter
+- **Stateless Authentication**: No server-side session storage
+- **Bearer Token Format**: Standard Authorization header implementation
+- **Error Handling**: Comprehensive validation and logging
+- **Flexible Login**: Support for username/email authentication from Unit 8
+
+### 📁 Files Created/Modified:
+```
+src/main/java/com/template/security/JwtUtils.java
+src/main/java/com/template/security/JwtAuthenticationFilter.java
+src/main/java/com/template/controller/AuthController.java
+src/main/java/com/template/config/SecurityConfig.java (updated)
+src/main/resources/application.yml (updated)
+pom.xml (added JJWT dependencies)
+```
+
+### 🔐 JWT Features:
+- **Token Generation**: Creates signed JWT tokens with username and expiration
+- **Token Validation**: Validates signature, expiration, and format
+- **Automatic Authentication**: Filter processes tokens on every request
+- **RESTful Endpoints**: Login, validation, and user info endpoints
+- **Security Headers**: Proper Bearer token format support
+- **Error Responses**: Clear error messages for invalid credentials/tokens
+
+### 🎯 API Endpoints:
+- `POST /api/auth/login` - User login with username/password, returns JWT
+- `POST /api/auth/validate` - Validate JWT token
+- `GET /api/auth/me` - Get current authenticated user info
+- All other endpoints now require valid JWT token in Authorization header
+
+**Status:** ✅ Unit 9 Complete - JWT token generation and validation implemented successfully
+
+---

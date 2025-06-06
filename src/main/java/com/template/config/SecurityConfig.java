@@ -1,5 +1,6 @@
 package com.template.config;
 
+import com.template.security.JwtAuthenticationFilter;
 import com.template.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +15,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security configuration for the application.
- * Provides basic authentication, password encoding, and security filters.
+ * Provides JWT-based authentication, password encoding, and security filters.
  * Uses modern Spring Security 6.x configuration with Java 21 best practices.
  */
 @Configuration
@@ -26,18 +28,20 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
-     * Constructor injection for UserDetailsService.
+     * Constructor injection for UserDetailsService and JWT filter.
      * 
      * @param userDetailsService the custom user details service
+     * @param jwtAuthenticationFilter the JWT authentication filter
      */
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, 
+                         JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userDetailsService = userDetailsService;
-    }
-
-    /**
-     * Configure the main security filter chain.
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }    /**
+     * Configure the main security filter chain with JWT authentication.
      * 
      * @param http the HttpSecurity configuration
      * @return the configured SecurityFilterChain
@@ -46,12 +50,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-            // Disable CSRF for API endpoints (will be re-enabled for web forms if needed)
+            // Disable CSRF for stateless JWT authentication
             .csrf(AbstractHttpConfigurer::disable)
             
-            // Configure session management - stateless for JWT (will be modified in Unit 9)
+            // Configure session management - stateless for JWT
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             
             // Configure authorization rules
@@ -66,24 +70,10 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             
-            // Configure HTTP Basic authentication for now (will be replaced with JWT in Unit 9)
-            .httpBasic(httpBasic -> httpBasic.realmName("Template API"))
+            // Add JWT authentication filter before UsernamePasswordAuthenticationFilter
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             
-            // Configure form login
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/api/users", true)
-                .permitAll()
-            )
-            
-            // Configure logout
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true)
-                .permitAll()
-            )            // Configure headers for security
+            // Configure headers for security
             .headers(headers -> headers
                 .frameOptions(frame -> frame.deny())
                 .contentTypeOptions(contentType -> {})

@@ -4,6 +4,7 @@ D:\projects\vibecodingproject\src\main\java\com\template\config\KafkaConfig.java
 D:\projects\vibecodingproject\src\main\java\com\template\config\MongoConfig.java
 D:\projects\vibecodingproject\src\main\java\com\template\config\RedisConfig.java
 D:\projects\vibecodingproject\src\main\java\com\template\config\SecurityConfig.java
+D:\projects\vibecodingproject\src\main\java\com\template\controller\AuthController.java
 D:\projects\vibecodingproject\src\main\java\com\template\controller\HealthController.java
 D:\projects\vibecodingproject\src\main\java\com\template\document\UserProfile.java
 D:\projects\vibecodingproject\src\main\java\com\template\entity\User.java
@@ -13,6 +14,8 @@ D:\projects\vibecodingproject\src\main\java\com\template\event\UserDeletedEvent.
 D:\projects\vibecodingproject\src\main\java\com\template\event\UserUpdatedEvent.java
 D:\projects\vibecodingproject\src\main\java\com\template\repository\mongo\UserProfileRepository.java
 D:\projects\vibecodingproject\src\main\java\com\template\repository\UserRepository.java
+D:\projects\vibecodingproject\src\main\java\com\template\security\JwtAuthenticationFilter.java
+D:\projects\vibecodingproject\src\main\java\com\template\security\JwtUtils.java
 D:\projects\vibecodingproject\src\main\java\com\template\service\KafkaEventConsumer.java
 D:\projects\vibecodingproject\src\main\java\com\template\service\KafkaEventPublisher.java
 D:\projects\vibecodingproject\src\main\java\com\template\service\RedisService.java
