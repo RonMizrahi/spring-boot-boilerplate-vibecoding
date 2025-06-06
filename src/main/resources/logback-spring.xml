@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATTERN" 
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-},%X{requestId:-}] %logger{36} - %msg%n"/>
+    <property name="APP_LOG_ROOT" value="${LOG_PATH:-./logs}"/>
+    
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="microservice-template"/>
+    <springProperty scope="context" name="activeProfile" source="spring.profiles.active" defaultValue="unknown"/>
+
+    <!-- Console appender configuration -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- File appender configuration for application logs -->
+    <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_ROOT}/${appName}-${activeProfile}.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${APP_LOG_ROOT}/archived/${appName}-${activeProfile}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- File appender configuration for error logs -->
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_ROOT}/${appName}-${activeProfile}-error.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${APP_LOG_ROOT}/archived/${appName}-${activeProfile}-error-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- Async appenders for improved performance -->
+    <appender name="ASYNC_APP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="APP_LOG"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    
+    <appender name="ASYNC_ERROR_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ERROR_LOG"/>
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    
+    <!-- Profile-specific configurations -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_APP_LOG"/>
+            <appender-ref ref="ASYNC_ERROR_LOG"/>
+        </root>
+        
+        <logger name="com.template" level="DEBUG"/>
+        <logger name="org.springframework.security" level="DEBUG"/>
+        <logger name="org.springframework.kafka" level="INFO"/>
+        <logger name="org.springframework.data.mongodb" level="DEBUG"/>
+        <logger name="org.springframework.data.redis" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    </springProfile>
+    
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_APP_LOG"/>
+            <appender-ref ref="ASYNC_ERROR_LOG"/>
+        </root>
+        
+        <logger name="com.template" level="INFO"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
+    </springProfile>
+    
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        
+        <logger name="com.template" level="DEBUG"/>
+        <logger name="org.springframework" level="INFO"/>
+    </springProfile>
+    
+    <!-- Clean profile only logs errors and warnings -->
+    <springProfile name="clean">
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_ERROR_LOG"/>
+        </root>
+        
+        <logger name="com.template" level="WARN"/>
+    </springProfile>
+</configuration>

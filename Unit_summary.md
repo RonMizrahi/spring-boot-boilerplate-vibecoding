@@ -720,3 +720,52 @@ Role (1) ←→ (N) RolePermission (N) ←→ (1) Permission
 **Status:** ✅ Unit 13 Complete - Database migrations with Flyway successfully implemented
 
 ---
+
+## Unit 14 - Comprehensive Logging and Monitoring ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **Structured Logging Configuration**
+   - Created `logback-spring.xml` for advanced log formatting, file rotation, and async logging
+   - Configured log pattern to include correlation IDs and request IDs for traceability
+   - Profile-specific log levels and output destinations (console, file)
+
+2. **Request and Correlation ID Logging**
+   - Implemented `RequestLoggingFilter` to inject and propagate correlation/request IDs via MDC
+   - All incoming requests and responses now include correlation headers for distributed tracing
+   - MDC context propagation for async tasks via `MdcTaskDecorator` and `AsyncConfig`
+
+3. **Logging Configuration Class**
+   - Added `LoggingConfig.java` to configure request logging and application startup info
+   - Enhanced request logging for debugging and observability
+
+4. **Health and Monitoring Endpoints**
+   - Enhanced `HealthController` with detailed health and system info endpoints
+   - Integrated with Spring Boot Actuator for health, info, and metrics endpoints
+   - Profile-based actuator exposure and security
+
+5. **Configuration Updates**
+   - Updated `application.yml` for improved management and logging configuration
+   - Ensured log file output and actuator endpoints are profile-aware
+
+### 📁 New/Modified Files:
+```
+src/main/resources/logback-spring.xml
+src/main/java/com/template/config/LoggingConfig.java
+src/main/java/com/template/filter/RequestLoggingFilter.java
+src/main/java/com/template/config/MdcTaskDecorator.java
+src/main/java/com/template/config/AsyncConfig.java
+src/main/java/com/template/controller/HealthController.java (enhanced)
+src/main/resources/application.yml (updated)
+```
+
+### 🔧 Technical Details:
+- **Correlation IDs**: All logs and requests traceable via unique IDs
+- **Async Logging**: MDC context preserved across async boundaries
+- **Actuator Integration**: Health, info, and metrics endpoints available and secured
+- **Profile Support**: Logging and monitoring adapt to dev/prod/test profiles
+- **Log Rotation**: File logs are rotated and archived for production readiness
+
+**Status:** ✅ Unit 14 Complete - Comprehensive logging and monitoring implemented and verified
+
+---
