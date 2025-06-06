@@ -637,3 +637,86 @@ src/main/java/com/template/dto/
 **Status:** ✅ Unit 12 Complete - Comprehensive input validation and exception handling implemented successfully
 
 ---
+
+## Unit 13 - Database Migrations with Flyway ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **Flyway Integration**
+   - Added Flyway dependency to pom.xml
+   - Configured Flyway in application.yml with proper settings
+   - Added profile-specific Flyway configurations in application-dev.yml and application-prod.yml
+   - Created migration directory structure at `src/main/resources/db/migration`
+   - Disabled Hibernate auto DDL generation (switched to validate mode)
+
+2. **Version-Controlled Migration Scripts**
+   - Created `V1__Create_users_table.sql` for users table schema with proper indexes
+   - Created `V2__Create_permissions_table.sql` for permissions with default permissions data
+   - Created `V3__Create_roles_table.sql` for roles with default roles data
+   - Created `V4__Create_join_tables.sql` for many-to-many relationships with default associations
+   - Added timestamps and proper constraints to all tables
+   - Implemented consistent naming conventions for primary keys, foreign keys, and indexes
+
+3. **Repeatable Migrations**
+   - Created `R__Audit_Triggers.sql` for database triggers that maintain timestamps
+   - Implemented automatic timestamp updating via PostgreSQL triggers
+   - Made script idempotent (can be run multiple times safely)
+
+4. **Data Initialization**
+   - Added default admin user with BCrypt-hashed password
+   - Added default roles (ADMIN, USER, GUEST)
+   - Added default permissions for common operations
+   - Established proper role-permission associations
+   - Assigned admin role to default admin user
+
+### 🔧 Technical Implementation:
+- **Schema Version Control**: Complete database schema now in version control
+- **Migration Strategy**: Baseline on migrate enabled for existing databases
+- **Clean Strategy**: Clean disabled in production for safety
+- **Validation**: Schema validation on application startup
+- **Transaction Management**: Each migration runs in a transaction
+- **Error Handling**: Proper error handling with migration validation
+- **Security**: Default admin user with secure password hash
+- **Backward Compatibility**: Non-destructive migrations for easy rollback
+
+### 📁 Files Created:
+```
+src/main/resources/db/migration/
+├── V1__Create_users_table.sql
+├── V2__Create_permissions_table.sql
+├── V3__Create_roles_table.sql
+├── V4__Create_join_tables.sql
+└── R__Audit_Triggers.sql
+```
+
+### 📁 Files Modified:
+```
+pom.xml (added Flyway dependency)
+src/main/resources/application.yml (added Flyway configuration)
+src/main/resources/application-dev.yml (updated JPA and Flyway settings)
+src/main/resources/application-prod.yml (updated JPA and Flyway settings)
+```
+
+### 🚀 Key Features:
+- **Complete Schema Definition**: All database objects fully defined
+- **Data Initialization**: Default users, roles, and permissions
+- **Repeatable Migrations**: Automatically updated timestamps and audit data
+- **Security Integration**: Proper foreign key constraints and indexes
+- **Versioning**: Clear version numbering for migrations
+- **Profile Support**: Environment-specific Flyway configurations
+
+### 📊 Entity Relationships in Migrations:
+```
+User (1) ←→ (N) UserRole (N) ←→ (1) Role
+Role (1) ←→ (N) RolePermission (N) ←→ (1) Permission
+```
+
+### ⚙️ Configuration:
+- **Production**: Clean operations disabled, baseline enabled
+- **Development**: Clean operations allowed for testing
+- **Locations**: Standard classpath:db/migration location
+- **Table**: Standard flyway_schema_history table for tracking
+
+**Status:** ✅ Unit 13 Complete - Database migrations with Flyway successfully implemented
+
+---
