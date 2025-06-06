@@ -199,3 +199,53 @@ src/test/java/com/template/service/KafkaEventConsumerTest.java
 **Commit:** `6a4e83e` - Kafka integration and event-driven architecture complete
 
 ---
+
+## Unit 8 - Spring Security Configuration ##
+**Date: [Current Date]**
+
+### ✅ Completed Tasks:
+1. **SecurityConfig Implementation**
+   - Created `src/main/java/com/template/config/SecurityConfig.java`
+   - Configured SecurityFilterChain with public endpoints (`/api/health`, `/api/auth/**`)
+   - Set up HTTP Basic authentication for protected endpoints
+   - Added security headers (frame options, content type options, XSS protection)
+   - Configured stateless session management for REST API
+   - Added BCryptPasswordEncoder bean for password hashing
+
+2. **Custom UserDetailsService Implementation**
+   - Created `src/main/java/com/template/service/UserDetailsServiceImpl.java`
+   - Implemented UserDetailsService interface for Spring Security authentication
+   - Added support for login with both username and email
+   - Mapped User entity fields to Spring Security UserDetails
+   - Set default ROLE_USER authority (to be enhanced in Unit 10)
+   - Added proper error handling for user not found scenarios
+
+3. **Authentication Configuration**
+   - Created AuthenticationManager bean with DaoAuthenticationProvider
+   - Integrated UserDetailsServiceImpl with password encoder
+   - Configured for database-driven authentication
+
+### 🔧 Technical Implementation:
+- **Spring Security 6.x**: Used modern configuration approach with SecurityFilterChain
+- **Password Security**: BCrypt encoder with default strength (10 rounds)
+- **Session Management**: Stateless for REST API compatibility
+- **Security Headers**: Comprehensive protection against common web vulnerabilities
+- **Flexible Login**: Users can authenticate with username or email
+- **Database Integration**: Full integration with existing User entity and UserRepository
+
+### 📁 Files Created:
+```
+src/main/java/com/template/config/SecurityConfig.java
+src/main/java/com/template/service/UserDetailsServiceImpl.java
+```
+
+### 🔐 Security Features:
+- Public health and authentication endpoints
+- Protected API endpoints requiring authentication
+- Secure password hashing with BCrypt
+- XSS and clickjacking protection
+- Stateless authentication suitable for microservices
+
+**Status:** ✅ Unit 8 Complete - Basic Spring Security configuration implemented and verified
+
+---
