@@ -5,6 +5,9 @@ import com.template.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,11 +41,11 @@ public class UserService {
     /**
      * Creates a new user.
      * 
-     * @param user the user to create
-     * @return the created user
+     * @param user the user to create     * @return the created user
      * @throws IllegalArgumentException if user data is invalid
      */
     @Transactional
+    @CachePut(value = "users", key = "#result.id")
     public User createUser(User user) {
         logger.debug("Creating new user with username: {}", user.getUsername());
           // Validate unique constraints
@@ -63,11 +66,12 @@ public class UserService {
     /**
      * Updates an existing user.
      * 
-     * @param user the user to update
-     * @return the updated user
+     * @param user the user to update     * @return the updated user
      * @throws IllegalArgumentException if user doesn't exist or data is invalid
      */
     @Transactional
+    @CachePut(value = "users", key = "#user.id")
+    @CacheEvict(value = "users", key = "#user.username")
     public User updateUser(User user) {
         logger.debug("Updating user with ID: {}", user.getId());
         
@@ -98,8 +102,8 @@ public class UserService {
      * Finds a user by ID.
      * 
      * @param id the user ID
-     * @return Optional containing the user if found
-     */
+     * @return Optional containing the user if found     */
+    @Cacheable(value = "users", key = "#id")
     public Optional<User> findById(Long id) {
         logger.debug("Finding user by ID: {}", id);
         return userRepository.findById(id);
@@ -111,6 +115,7 @@ public class UserService {
      * @param username the username
      * @return Optional containing the user if found
      */
+    @Cacheable(value = "users", key = "#username")
     public Optional<User> findByUsername(String username) {
         logger.debug("Finding user by username: {}", username);
         return userRepository.findByUsername(username);
@@ -241,12 +246,12 @@ public class UserService {
     }
     
     /**
-     * Deletes a user by ID.
-     * 
+     * Deletes a user by ID.     * 
      * @param userId the user ID
      * @throws IllegalArgumentException if user not found
      */
     @Transactional
+    @CacheEvict(value = "users", key = "#userId")
     public void deleteUser(Long userId) {        logger.debug("Deleting user with ID: {}", userId);
         
         if (!userRepository.existsById(userId)) {

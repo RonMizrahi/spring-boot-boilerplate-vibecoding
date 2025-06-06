@@ -4,6 +4,9 @@ import com.template.document.UserProfile;
 import com.template.repository.mongo.UserProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,11 +39,11 @@ public class UserProfileService {
     
     /**
      * Creates a new user profile.
-     * 
-     * @param userProfile the user profile to create
+     *     * @param userProfile the user profile to create
      * @return the created user profile
      * @throws IllegalArgumentException if user profile data is invalid
      */
+    @CachePut(value = "userProfiles", key = "#result.id")
     public UserProfile createUserProfile(UserProfile userProfile) {
         logger.debug("Creating new user profile for user ID: {}", userProfile.getUserId());
         
@@ -58,10 +61,11 @@ public class UserProfileService {
     /**
      * Updates an existing user profile.
      * 
-     * @param userProfile the user profile to update
-     * @return the updated user profile
+     * @param userProfile the user profile to update     * @return the updated user profile
      * @throws IllegalArgumentException if user profile doesn't exist or data is invalid
      */
+    @CachePut(value = "userProfiles", key = "#userProfile.id")
+    @CacheEvict(value = "userProfiles", key = "'userId:' + #userProfile.userId")
     public UserProfile updateUserProfile(UserProfile userProfile) {
         logger.debug("Updating user profile with ID: {}", userProfile.getId());
         
@@ -81,10 +85,10 @@ public class UserProfileService {
     
     /**
      * Finds a user profile by ID.
-     * 
-     * @param id the user profile ID
+     *     * @param id the user profile ID
      * @return Optional containing the user profile if found
      */
+    @Cacheable(value = "userProfiles", key = "#id")
     public Optional<UserProfile> findById(String id) {
         logger.debug("Finding user profile by ID: {}", id);
         return userProfileRepository.findById(id);
@@ -96,6 +100,7 @@ public class UserProfileService {
      * @param userId the user ID
      * @return Optional containing the user profile if found
      */
+    @Cacheable(value = "userProfiles", key = "'userId:' + #userId")
     public Optional<UserProfile> findByUserId(Long userId) {
         logger.debug("Finding user profile by user ID: {}", userId);
         return userProfileRepository.findByUserId(userId);
@@ -261,8 +266,8 @@ public class UserProfileService {
      * Deletes a user profile by ID.
      * 
      * @param id the user profile ID
-     * @throws IllegalArgumentException if profile doesn't exist
-     */
+     * @throws IllegalArgumentException if profile doesn't exist     */
+    @CacheEvict(value = "userProfiles", key = "#id")
     public void deleteById(String id) {
         logger.debug("Deleting user profile by ID: {}", id);
         

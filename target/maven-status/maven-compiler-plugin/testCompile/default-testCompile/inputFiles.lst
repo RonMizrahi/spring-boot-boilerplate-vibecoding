@@ -1,7 +1,9 @@
 D:\projects\vibecodingproject\src\test\java\com\template\ApplicationTests.java
+D:\projects\vibecodingproject\src\test\java\com\template\config\RedisConfigTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\document\UserProfileTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\entity\UserTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\repository\mongo\UserProfileRepositoryTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\repository\UserRepositoryTest.java
+D:\projects\vibecodingproject\src\test\java\com\template\service\RedisServiceTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\service\UserProfileServiceTest.java
 D:\projects\vibecodingproject\src\test\java\com\template\service\UserServiceTest.java

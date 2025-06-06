@@ -1,10 +1,12 @@
 D:\projects\vibecodingproject\src\main\java\com\template\Application.java
 D:\projects\vibecodingproject\src\main\java\com\template\config\JpaConfig.java
 D:\projects\vibecodingproject\src\main\java\com\template\config\MongoConfig.java
+D:\projects\vibecodingproject\src\main\java\com\template\config\RedisConfig.java
 D:\projects\vibecodingproject\src\main\java\com\template\controller\HealthController.java
 D:\projects\vibecodingproject\src\main\java\com\template\document\UserProfile.java
 D:\projects\vibecodingproject\src\main\java\com\template\entity\User.java
 D:\projects\vibecodingproject\src\main\java\com\template\repository\mongo\UserProfileRepository.java
 D:\projects\vibecodingproject\src\main\java\com\template\repository\UserRepository.java
+D:\projects\vibecodingproject\src\main\java\com\template\service\RedisService.java
 D:\projects\vibecodingproject\src\main\java\com\template\service\UserProfileService.java
 D:\projects\vibecodingproject\src\main\java\com\template\service\UserService.java
