@@ -402,3 +402,120 @@ User (1) ←→ (N) Role (N) ←→ (N) Permission
 **Status:** ✅ Unit 10 Complete - Role-based authorization with method-level security implemented successfully
 
 ---
+
+## Unit 11 - Comprehensive REST API Layer ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **Data Transfer Objects (DTOs) Creation**
+   - Created `UserDTO.java` for User entity API representation
+   - Created `UserProfileDTO.java` for UserProfile document API representation
+   - Created `CreateUserRequestDTO.java` for user creation requests with password field
+   - Added comprehensive validation annotations and JSON formatting
+   - Separated sensitive data (passwords) from response DTOs
+
+2. **UserController Implementation**
+   - Created comprehensive REST API for User entity operations
+   - Implemented full CRUD operations with proper HTTP status codes
+   - Added role-based authorization with `@PreAuthorize` annotations
+   - Implemented pagination and sorting for list operations
+   - Added search functionality (by username, email, name)
+   - Added user management operations (enable/disable/delete)
+   - Added utility endpoints (existence checks, count statistics)
+
+3. **UserProfileController Implementation**
+   - Created comprehensive REST API for UserProfile document operations
+   - Implemented full CRUD operations with proper HTTP status codes
+   - Added privacy-aware operations (public vs private profiles)
+   - Implemented advanced search functionality (location, bio, age range, preferences)
+   - Added specialized endpoints (recent profiles, profiles with website)
+   - Added analytics endpoints (count by location)
+
+4. **Security Integration**
+   - Admin-only operations for user creation and system management
+   - User can access their own profile data and update operations
+   - Public endpoints for viewing public profiles
+   - Authenticated endpoints for searching and discovery
+   - Proper authorization checks in UserProfileController
+
+5. **DTO Mapping and Conversion**
+   - Entity-to-DTO conversion methods in both controllers
+   - DTO-to-Entity conversion for creation and updates
+   - Proper handling of nested objects (roles conversion to string set)
+   - Safe exposure of user data without sensitive information
+
+### 🔧 Technical Implementation:
+- **HTTP Methods**: Full REST compliance with GET, POST, PUT, PATCH, DELETE
+- **Status Codes**: Proper HTTP status codes (201 Created, 404 Not Found, 409 Conflict, etc.)
+- **Validation**: Bean validation on DTOs with custom error messages
+- **Pagination**: Spring Data pagination support with configurable page size and sorting
+- **Search Operations**: Multiple search strategies for both entities and documents
+- **Authorization**: Method-level security with Spring Security expressions
+- **Logging**: Comprehensive debug and info logging throughout controllers
+
+### 📁 Files Created:
+```
+src/main/java/com/template/dto/
+├── UserDTO.java                    (User entity DTO)
+├── UserProfileDTO.java             (UserProfile document DTO)
+└── CreateUserRequestDTO.java       (User creation request DTO)
+
+src/main/java/com/template/controller/
+├── UserController.java             (User REST API)
+└── UserProfileController.java      (UserProfile REST API)
+```
+
+### 🎯 API Endpoints Summary:
+
+#### User API (`/api/users`)
+- `POST /api/users` - Create user (Admin only)
+- `GET /api/users/{id}` - Get user by ID (Authenticated)
+- `GET /api/users/username/{username}` - Get user by username (Authenticated)
+- `GET /api/users/email/{email}` - Get user by email (Authenticated)
+- `GET /api/users` - Get all users with pagination (Admin only)
+- `GET /api/users/active` - Get active users (Authenticated)
+- `GET /api/users/search/username` - Search by username (Authenticated)
+- `GET /api/users/search/name` - Search by name (Authenticated)
+- `PUT /api/users/{id}` - Update user (Admin or own profile)
+- `PATCH /api/users/{id}/enable` - Enable user (Admin only)
+- `PATCH /api/users/{id}/disable` - Disable user (Admin only)
+- `DELETE /api/users/{id}` - Delete user (Admin only)
+- `GET /api/users/count` - Get user statistics (Admin only)
+- `GET /api/users/exists/username/{username}` - Check username exists (Public)
+- `GET /api/users/exists/email/{email}` - Check email exists (Public)
+
+#### User Profile API (`/api/user-profiles`)
+- `POST /api/user-profiles` - Create profile (Authenticated)
+- `GET /api/user-profiles/{id}` - Get profile by ID (Authenticated)
+- `GET /api/user-profiles/user/{userId}` - Get profile by user ID (Authenticated)
+- `GET /api/user-profiles` - Get all profiles with pagination (Admin only)
+- `GET /api/user-profiles/public` - Get public profiles (Public)
+- `GET /api/user-profiles/search/location` - Search by location (Authenticated)
+- `GET /api/user-profiles/search/bio` - Search by bio keywords (Authenticated)
+- `GET /api/user-profiles/search/age-range` - Search by age range (Authenticated)
+- `GET /api/user-profiles/search/preference` - Search by preference (Authenticated)
+- `GET /api/user-profiles/recent` - Get recently created profiles (Authenticated)
+- `GET /api/user-profiles/with-website` - Get profiles with website (Authenticated)
+- `PUT /api/user-profiles/{id}` - Update profile (Owner or Admin)
+- `DELETE /api/user-profiles/{id}` - Delete profile (Admin only)
+- `GET /api/user-profiles/count/location/{location}` - Count by location (Authenticated)
+
+### 🚀 Key Features:
+- **Complete CRUD Operations**: Full create, read, update, delete for both User and UserProfile
+- **Advanced Search**: Multiple search strategies and filters
+- **Security Integration**: Role-based access control with method-level security
+- **Data Validation**: Comprehensive input validation with custom error messages
+- **Performance**: Pagination support for large datasets
+- **API Standards**: RESTful design with proper HTTP methods and status codes
+- **Privacy Controls**: Public/private profile separation
+- **Analytics**: Count and statistics endpoints for reporting
+
+### ⚙️ Configuration Requirements:
+- **Spring Security**: Method-level security must be enabled (`@EnableMethodSecurity`)
+- **Validation**: Bean validation must be configured for DTO validation
+- **Pagination**: Spring Data pagination support required
+- **Jackson**: JSON serialization configured for LocalDateTime handling
+
+**Status:** ✅ Unit 11 Complete - Comprehensive REST API layer implemented with full CRUD operations, advanced search, and proper security integration
+
+---
