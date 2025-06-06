@@ -2,9 +2,7 @@ package com.template.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -18,9 +16,9 @@ import java.util.Set;
 public class UserDTO {
     
     private Long id;
-    
-    @NotBlank(message = "Username is required")
+      @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Username can only contain letters, numbers, underscores, and hyphens")
     private String username;
     
     @NotBlank(message = "Email is required")
@@ -29,9 +27,11 @@ public class UserDTO {
     private String email;
     
     @Size(max = 50, message = "First name must not exceed 50 characters")
+    @Pattern(regexp = "^[a-zA-Z\\s'-]*$", message = "First name can only contain letters, spaces, hyphens, and apostrophes")
     private String firstName;
     
     @Size(max = 50, message = "Last name must not exceed 50 characters")
+    @Pattern(regexp = "^[a-zA-Z\\s'-]*$", message = "Last name can only contain letters, spaces, hyphens, and apostrophes")
     private String lastName;
     
     private Boolean enabled;

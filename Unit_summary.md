@@ -519,3 +519,121 @@ src/main/java/com/template/controller/
 **Status:** ✅ Unit 11 Complete - Comprehensive REST API layer implemented with full CRUD operations, advanced search, and proper security integration
 
 ---
+
+## Unit 12 - Input Validation and Exception Handling ##
+**Date: June 6, 2025**
+
+### ✅ Completed Tasks:
+1. **Custom Exception Classes**
+   - Created `CustomExceptions.java` with comprehensive exception types:
+     - `ResourceNotFoundException` - For entity not found scenarios
+     - `ResourceAlreadyExistsException` - For duplicate resource conflicts
+     - `InvalidInputException` - For business logic validation failures
+     - `UnauthorizedException` - For authentication failures
+     - `ForbiddenException` - For authorization failures
+     - `ExternalServiceException` - For external service integration failures
+     - `DataProcessingException` - For data processing errors
+   - All exceptions provide constructors for detailed error messages
+
+2. **Error Response DTO**
+   - Created `ErrorResponse.java` as standardized error response format
+   - Includes timestamp, status code, error type, message, and request path
+   - Supports field-level validation errors with `FieldError` nested class
+   - JSON formatting with proper date/time serialization
+   - Non-null inclusion to keep responses clean
+
+3. **Global Exception Handler**
+   - Created `GlobalExceptionHandler.java` with `@RestControllerAdvice`
+   - Comprehensive exception handling for all application scenarios:
+     - Custom application exceptions with appropriate HTTP status codes
+     - Bean validation errors (`@Valid` annotation support)
+     - Spring Security authentication and authorization exceptions
+     - HTTP-related exceptions (method not supported, media type, etc.)
+     - Database and data integrity violations
+     - Generic fallback for unexpected exceptions
+   - Consistent error response format across all endpoints
+   - Detailed logging for debugging and monitoring
+
+4. **Enhanced DTO Validation**
+   - **CreateUserRequestDTO enhancements**:
+     - Username pattern validation (alphanumeric, underscore, hyphen only)
+     - Strong password requirements (8-128 chars, mixed case, digits, special chars)
+     - Name pattern validation (letters, spaces, hyphens, apostrophes only)
+   - **UserDTO enhancements**:
+     - Username and name pattern validation consistent with creation DTO
+     - Improved field validation for consistent data quality
+   - **UserProfileDTO enhancements**:
+     - Website URL pattern validation with proper URL format
+     - Phone number international format validation
+     - Date of birth past validation
+     - Gender enumeration validation (male, female, other, prefer_not_to_say)
+     - Avatar and cover image URL validation for image file formats
+
+### 🔧 Technical Implementation:
+- **Exception Hierarchy**: Comprehensive custom exception types for different error scenarios
+- **HTTP Status Mapping**: Proper HTTP status codes for each exception type
+- **Field Validation**: Bean validation with detailed field-level error messages
+- **Security Integration**: Proper handling of Spring Security exceptions
+- **Database Integration**: Data access and integrity violation handling
+- **Logging Strategy**: Appropriate logging levels (warn for client errors, error for server issues)
+- **Pattern Validation**: Regular expressions for data format validation
+- **Null Safety**: Proper null checking and safe navigation
+
+### 📁 Files Created:
+```
+src/main/java/com/template/exception/
+├── CustomExceptions.java           (Custom exception types)
+└── GlobalExceptionHandler.java     (Global exception handler)
+
+src/main/java/com/template/dto/
+└── ErrorResponse.java              (Standardized error response)
+```
+
+### 📁 Files Enhanced:
+```
+src/main/java/com/template/dto/
+├── CreateUserRequestDTO.java       (Enhanced validation)
+├── UserDTO.java                    (Enhanced validation)
+└── UserProfileDTO.java             (Enhanced validation)
+```
+
+### 🎯 Exception Handling Coverage:
+- **400 Bad Request**: Validation errors, illegal arguments, malformed requests
+- **401 Unauthorized**: Authentication failures, invalid credentials
+- **403 Forbidden**: Authorization failures, access denied
+- **404 Not Found**: Resource not found, invalid endpoints
+- **405 Method Not Allowed**: HTTP method not supported
+- **409 Conflict**: Resource already exists, data integrity violations
+- **415 Unsupported Media Type**: Invalid content types
+- **422 Unprocessable Entity**: Data processing errors
+- **500 Internal Server Error**: Unexpected application errors
+- **503 Service Unavailable**: External service failures
+
+### 🔍 Validation Features:
+- **Username Validation**: Alphanumeric with underscore/hyphen support
+- **Password Strength**: Complex password requirements with pattern matching
+- **Email Validation**: Standard email format validation
+- **Name Validation**: International name support with special characters
+- **URL Validation**: Website and image URL format validation
+- **Phone Validation**: International phone number format
+- **Date Validation**: Past date validation for birth dates
+- **Enumeration Validation**: Controlled values for gender and similar fields
+
+### ⚙️ Configuration:
+- **Global Handler**: `@RestControllerAdvice` provides application-wide exception handling
+- **Validation Integration**: Full integration with Spring Boot validation framework
+- **Security Integration**: Seamless handling of Spring Security exceptions
+- **Logging Integration**: SLF4J logging with appropriate levels for monitoring
+- **JSON Serialization**: Consistent error response format with Jackson
+
+### 🚀 Benefits:
+- **Consistent Error Responses**: Standardized error format across all endpoints
+- **User-Friendly Messages**: Clear, actionable error messages for API consumers
+- **Security**: Proper handling of authentication and authorization failures
+- **Debugging**: Comprehensive logging for issue diagnosis
+- **Validation**: Robust input validation with detailed field-level errors
+- **Maintainability**: Centralized exception handling for easy maintenance
+
+**Status:** ✅ Unit 12 Complete - Comprehensive input validation and exception handling implemented successfully
+
+---

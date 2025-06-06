@@ -2,8 +2,7 @@ package com.template.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,17 +25,23 @@ public class UserProfileDTO {
     
     @Size(max = 100, message = "Location must not exceed 100 characters")
     private String location;
-    
-    @Size(max = 255, message = "Website URL must not exceed 255 characters")
+      @Size(max = 255, message = "Website URL must not exceed 255 characters")
+    @Pattern(regexp = "^(https?://)?(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/.*)?$", 
+             message = "Website must be a valid URL")
     private String website;
     
     @Size(max = 50, message = "Phone number must not exceed 50 characters")
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", 
+             message = "Phone number must be a valid international format")
     private String phoneNumber;
     
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Past(message = "Date of birth must be in the past")
     private LocalDateTime dateOfBirth;
     
     @Size(max = 10, message = "Gender must not exceed 10 characters")
+    @Pattern(regexp = "^(male|female|other|prefer_not_to_say)$", flags = Pattern.Flag.CASE_INSENSITIVE,
+             message = "Gender must be one of: male, female, other, prefer_not_to_say")
     private String gender;
     
     @Size(max = 50, message = "Occupation must not exceed 50 characters")
@@ -44,9 +49,14 @@ public class UserProfileDTO {
     
     @Size(max = 100, message = "Company must not exceed 100 characters")
     private String company;
-    
+      @Size(max = 255, message = "Avatar URL must not exceed 255 characters")
+    @Pattern(regexp = "^(https?://).*\\.(jpg|jpeg|png|gif|bmp|webp)$", flags = Pattern.Flag.CASE_INSENSITIVE,
+             message = "Avatar URL must be a valid image URL")
     private String avatarUrl;
     
+    @Size(max = 255, message = "Cover image URL must not exceed 255 characters")
+    @Pattern(regexp = "^(https?://).*\\.(jpg|jpeg|png|gif|bmp|webp)$", flags = Pattern.Flag.CASE_INSENSITIVE,
+             message = "Cover image URL must be a valid image URL")
     private String coverImageUrl;
     
     private Boolean isPublic;
