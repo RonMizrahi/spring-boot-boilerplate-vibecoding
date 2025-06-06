@@ -1,0 +1,10 @@
+com\template\Application.class
+com\template\repository\UserRepository.class
+com\template\entity\User.class
+com\template\service\UserProfileService.class
+com\template\document\UserProfile.class
+com\template\config\JpaConfig.class
+com\template\config\MongoConfig.class
+com\template\service\UserService.class
+com\template\repository\mongo\UserProfileRepository.class
+com\template\controller\HealthController.class

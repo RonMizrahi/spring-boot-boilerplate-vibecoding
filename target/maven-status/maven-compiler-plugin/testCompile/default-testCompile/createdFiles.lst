@@ -1,0 +1,5 @@
+com\template\entity\UserTest.class
+com\template\ApplicationTests.class
+com\template\service\UserProfileServiceTest.class
+com\template\service\UserServiceTest.class
+com\template\repository\UserRepositoryTest.class

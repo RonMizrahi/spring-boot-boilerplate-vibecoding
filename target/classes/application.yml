@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: microservice-template
+  profiles:
+    active: dev
+
+# Default Actuator Configuration (overridden in profiles)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Default Logging Configuration (overridden in profiles)
+logging:
+  level:
+    '[com.template]': INFO
+    '[org.springframework]': INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
